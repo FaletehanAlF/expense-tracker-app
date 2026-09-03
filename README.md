@@ -28,3 +28,22 @@ expense-tracker-web/
 ├── index.html
 ├── style.css
 ├── script.js
+
+How to Run
+
+1. Clone this repository:
+git clone https://github.com/USERNAME/expense-tracker-web.git
+
+2. Navigate to the project directory:
+cd expense-tracker-web
+
+3. Open index.html in your browser.
+You can also use the Live Server extension in Visual Studio Code to run the application.
+
+Purpose
+This project was created to practice the fundamentals of web development using HTML, CSS, and JavaScript, particularly in building a simple application for managing expense transactions.
+
+Author
+Faletehan Al Farabi
+
+
