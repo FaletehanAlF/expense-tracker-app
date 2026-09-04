@@ -240,10 +240,17 @@ body {
     justify-content: flex-end;
 }
 
-.search-input {
-    min-width: 190px;
+.search-form {
+    display: flex;
+    gap: 8px;
     flex: 1;
-    max-width: 260px;
+    min-width: 220px;
+    max-width: 340px;
+}
+
+.search-input {
+    min-width: 0;
+    flex: 1;
     padding: 10px 12px;
     border: 1.5px solid #cbd5e1;
     border-radius: 10px;
@@ -264,6 +271,118 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.transaction-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.list-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.list-title {
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.list-title::before {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--muted);
+}
+
+.list-title-income::before {
+    background: var(--income);
+}
+
+.list-title-expense::before {
+    background: var(--expense);
+}
+
+.category-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.tab-btn {
+    border: 1.5px solid var(--border);
+    background: #f8fafc;
+    color: var(--muted);
+    font-size: 13.5px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.tab-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.tab-btn.active {
+    background: var(--dark);
+    border-color: var(--dark);
+    color: #ffffff;
+}
+
+.tab-btn:focus-visible,
+.btn-search:focus-visible,
+.btn:focus-visible,
+.delete-btn:focus-visible {
+    outline: 3px solid rgba(79, 70, 229, 0.4);
+    outline-offset: 2px;
+}
+
+.btn-search {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--dark);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.btn-search:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.filter-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .empty-message {
