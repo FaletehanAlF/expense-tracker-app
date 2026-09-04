@@ -42,15 +42,16 @@
             <div class="form-section">
                 <h2>Add Transaction</h2>
 
-                <form id="transaction-form" data-testid="transaction-form">
+                <form id="transaction-form" data-testid="transactionForm">
 
                     <div class="form-group">
-                        <label for="description">Description</label>
+                        <label for="description">Title</label>
                         <input
                             type="text"
                             id="description"
-                            data-testid="description-input"
-                            placeholder="Enter transaction description"
+                            data-testid="transactionFormTitleInput"
+                            placeholder="Enter transaction title"
+                            autocomplete="off"
                             required
                         >
                     </div>
@@ -60,7 +61,7 @@
                         <input
                             type="number"
                             id="amount"
-                            data-testid="amount-input"
+                            data-testid="transactionFormAmountInput"
                             placeholder="Enter amount"
                             min="1"
                             required
@@ -68,10 +69,20 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="date">Date</label>
+                        <input
+                            type="date"
+                            id="date"
+                            data-testid="transactionFormDateInput"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
                         <label for="type">Type</label>
-                        <select id="type" data-testid="type-input" required>
-                            <option value="expense">Expense</option>
+                        <select id="type" data-testid="transactionFormTypeSelect" required>
                             <option value="income">Income</option>
+                            <option value="expense">Expense</option>
                         </select>
                     </div>
 
@@ -88,17 +99,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="date">Date</label>
-                        <input
-                            type="date"
-                            id="date"
-                            data-testid="date-input"
-                            required
-                        >
-                    </div>
-
-                    <button type="submit" class="btn" data-testid="submit-button">
+                    <button type="submit" class="btn" data-testid="transactionFormSubmitButton">
                         Add Transaction
                     </button>
 
@@ -110,35 +111,59 @@
                     <h2>Transactions</h2>
 
                     <div class="toolbar">
-                        <input
-                            type="search"
-                            id="search"
-                            data-testid="search-input"
-                            class="search-input"
-                            placeholder="Search transactions..."
-                            autocomplete="off"
-                        >
-                        <select id="filter" data-testid="filter-type" aria-label="Filter by type">
-                            <option value="all">All</option>
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
-                        </select>
-                        <select id="category-filter" data-testid="filter-category" aria-label="Filter by category">
-                            <option value="all">All Categories</option>
-                            <option value="Food">Food</option>
-                            <option value="Transportation">Transportation</option>
-                            <option value="Shopping">Shopping</option>
-                            <option value="Bills">Bills</option>
-                            <option value="Entertainment">Entertainment</option>
-                            <option value="Other">Other</option>
-                        </select>
+                        <form id="search-form" data-testid="searchTransactionForm" class="search-form" role="search">
+                            <label for="search" class="sr-only">Search transactions</label>
+                            <input
+                                type="search"
+                                id="search"
+                                data-testid="searchTransactionFormTitleInput"
+                                class="search-input"
+                                placeholder="Search transaction..."
+                                autocomplete="off"
+                            >
+                            <button type="submit" class="btn-search" data-testid="searchTransactionFormSubmitButton">
+                                Search
+                            </button>
+                        </form>
+                        <div class="filter-row">
+                            <select id="filter" data-testid="filter-type" aria-label="Filter by type">
+                                <option value="all">All</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                            <select id="category-filter" data-testid="filter-category" aria-label="Filter by category">
+                                <option value="all">All Categories</option>
+                                <option value="Food">Food</option>
+                                <option value="Transportation">Transportation</option>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Bills">Bills</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div id="transaction-list" data-testid="transaction-list" class="transaction-list">
-                    <p class="empty-message">
-                        No transactions yet.
-                    </p>
+                <div class="category-tabs" role="tablist" aria-label="Filter transactions by type">
+                    <button type="button" class="tab-btn active" data-tab="all" aria-pressed="true">All</button>
+                    <button type="button" class="tab-btn" data-tab="income" aria-pressed="false">Income</button>
+                    <button type="button" class="tab-btn" data-tab="expense" aria-pressed="false">Expense</button>
+                </div>
+
+                <div id="transaction-list" class="transaction-list-wrapper">
+                    <section class="list-section" aria-label="Income transactions">
+                        <h3 class="list-title list-title-income">Income</h3>
+                        <div id="incomeList" data-testid="incomeList" class="transaction-list">
+                            <p class="empty-message">No transactions yet.</p>
+                        </div>
+                    </section>
+
+                    <section class="list-section" aria-label="Expense transactions">
+                        <h3 class="list-title list-title-expense">Expense</h3>
+                        <div id="expenseList" data-testid="expenseList" class="transaction-list">
+                            <p class="empty-message">No transactions yet.</p>
+                        </div>
+                    </section>
                 </div>
             </div>
 
