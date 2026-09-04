@@ -14,7 +14,7 @@
                 <h1>Expense Tracker</h1>
                 <p>Manage your expenses easily and efficiently.</p>
             </div>
-            <div class="header-badge" aria-hidden="true">💰</div>
+            <div class="header-badge" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></div>
         </div>
     </header>
 
@@ -122,6 +122,7 @@
                                 autocomplete="off"
                             >
                             <button type="submit" class="btn-search" data-testid="searchTransactionFormSubmitButton">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                                 Search
                             </button>
                         </form>
@@ -152,14 +153,14 @@
 
                 <div id="transaction-list" class="transaction-list-wrapper">
                     <section class="list-section" aria-label="Income transactions">
-                        <h3 class="list-title list-title-income">Income</h3>
+                        <h3 class="list-title list-title-income"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>Income</h3>
                         <div id="incomeList" data-testid="incomeList" class="transaction-list">
                             <p class="empty-message">No transactions yet.</p>
                         </div>
                     </section>
 
                     <section class="list-section" aria-label="Expense transactions">
-                        <h3 class="list-title list-title-expense">Expense</h3>
+                        <h3 class="list-title list-title-expense"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>Expense</h3>
                         <div id="expenseList" data-testid="expenseList" class="transaction-list">
                             <p class="empty-message">No transactions yet.</p>
                         </div>
