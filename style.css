@@ -101,12 +101,9 @@ body {
     letter-spacing: -0.02em;
 }
 
-.summary-card.summary-income h2 {
-    color: var(--income);
-}
-
+.summary-card.summary-income h2,
 .summary-card.summary-expense h2 {
-    color: var(--expense);
+    color: var(--text);
 }
 
 /* Content */
@@ -373,19 +370,15 @@ body {
     border: 1px solid var(--border);
     border-radius: 10px;
     background: #fff;
-    border-left-width: 3px;
 }
 
 .transaction-item:hover {
     border-color: #cbd5e1;
 }
 
-.transaction-item.income {
-    border-left-color: var(--income);
-}
-
+.transaction-item.income,
 .transaction-item.expense {
-    border-left-color: var(--expense);
+    border-left-color: var(--border);
 }
 
 .transaction-info h3 {
@@ -411,14 +404,10 @@ body {
     vertical-align: middle;
 }
 
-.badge-income {
-    background: var(--income-bg);
-    color: var(--income);
-}
-
+.badge-income,
 .badge-expense {
-    background: var(--expense-bg);
-    color: var(--expense);
+    background: #f1f5f9;
+    color: var(--muted);
 }
 
 .transaction-right {
@@ -432,18 +421,15 @@ body {
     font-size: 15px;
 }
 
-.transaction-amount.income {
-    color: var(--income);
-}
-
+.transaction-amount.income,
 .transaction-amount.expense {
-    color: var(--expense);
+    color: var(--text);
 }
 
 .delete-btn {
-    border: 1px solid #fecaca;
-    background: #fef2f2;
-    color: #dc2626;
+    border: 1px solid var(--border);
+    background: #f8fafc;
+    color: var(--text);
     cursor: pointer;
     font-size: 13px;
     font-weight: 700;
