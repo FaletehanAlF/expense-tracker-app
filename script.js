@@ -1,5 +1,7 @@
 const transactionForm = document.getElementById("transaction-form");
-const transactionList = document.getElementById("transaction-list");
+const incomeListEl = document.getElementById("incomeList");
+const expenseListEl = document.getElementById("expenseList");
+const searchForm = document.getElementById("search-form");
 const filter = document.getElementById("filter");
 const searchInput = document.getElementById("search");
 const categoryFilter = document.getElementById("category-filter");
@@ -72,127 +74,132 @@ function getFilteredTransactions() {
 
 // ---------- Form: ambil data -> proses -> simpan -> update DOM ----------
 
-transactionForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+if (transactionForm) {
+    transactionForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-    const description = document.getElementById("description").value.trim();
-    const amount = Number(document.getElementById("amount").value);
-    const type = document.getElementById("type").value;
-    const category = document.getElementById("category").value;
-    const date = document.getElementById("date").value;
+        const description = document.getElementById("description").value.trim();
+        const amount = Number(document.getElementById("amount").value);
+        const type = document.getElementById("type").value;
+        const category = document.getElementById("category").value;
+        const date = document.getElementById("date").value;
 
-    // Validasi minimal (HTML required + min sudah ada, ini pengaman JS)
-    if (!description) {
-        document.getElementById("description").focus();
-        return;
-    }
-    if (!Number.isFinite(amount) || amount <= 0) {
-        document.getElementById("amount").focus();
-        return;
-    }
-    if (!category) {
-        document.getElementById("category").focus();
-        return;
-    }
-    if (!date) {
-        document.getElementById("date").focus();
-        return;
-    }
+        // Validasi minimal (HTML required + min sudah ada, ini pengaman JS)
+        if (!description) {
+            document.getElementById("description").focus();
+            return;
+        }
+        if (!Number.isFinite(amount) || amount <= 0) {
+            document.getElementById("amount").focus();
+            return;
+        }
+        if (!date) {
+            document.getElementById("date").focus();
+            return;
+        }
+        if (!category) {
+            document.getElementById("category").focus();
+            return;
+        }
 
-    const transaction = {
-        id: Date.now(),
-        description,
-        amount,
-        type,
-        category,
-        date
-    };
+        const transaction = {
+            id: Date.now(),
+            description,
+            amount,
+            type,
+            category,
+            date
+        };
 
-    transactions.push(transaction);
-    saveTransactions();
+        transactions.push(transaction);
+        saveTransactions();
 
-    transactionForm.reset();
+        transactionForm.reset();
 
-    renderTransactions();
-    updateSummary();
-});
-
-// ---------- Render daftar transaksi ke DOM ----------
-
-function renderTransactions() {
-    transactionList.innerHTML = "";
-
-    if (transactions.length === 0) {
-        transactionList.innerHTML = `
-            <p class="empty-message">
-                No transactions yet.
-            </p>
-        `;
-
-        return;
-    }
-
-    const filtered = getFilteredTransactions();
-
-    if (filtered.length === 0) {
-        transactionList.innerHTML = `
-            <p class="empty-message">
-                No transactions found.
-            </p>
-        `;
-
-        return;
-    }
-
-    filtered.forEach(function (transaction) {
-        const item = document.createElement("div");
-
-        item.classList.add("transaction-item");
-        item.classList.add(transaction.type === "income" ? "income" : "expense");
-        item.setAttribute("data-testid", "transaction-item");
-        item.setAttribute("data-id", String(transaction.id));
-        item.setAttribute("data-type", transaction.type);
-        item.setAttribute("data-category", transaction.category);
-
-        const sign = transaction.type === "income" ? "+" : "-";
-
-        item.innerHTML = `
-            <div class="transaction-info">
-                <h3>${escapeHTML(transaction.description)}</h3>
-                <p>${escapeHTML(transaction.category)} • ${escapeHTML(transaction.date)} <span class="badge badge-${escapeHTML(transaction.type)}">${escapeHTML(transaction.type)}</span></p>
-            </div>
-
-            <div class="transaction-right">
-                <div class="transaction-amount ${escapeHTML(transaction.type)}">
-                    ${sign} ${escapeHTML(formatRupiah(transaction.amount))}
-                </div>
-
-                <button
-                    type="button"
-                    class="delete-btn"
-                    data-testid="delete-button"
-                    data-id="${transaction.id}"
-                    onclick="deleteTransaction(${transaction.id})"
-                >
-                    Delete
-                </button>
-            </div>
-        `;
-
-        transactionList.appendChild(item);
+        renderTransactions();
+        updateSummary();
     });
 }
 
-// Event delegation sebagai pelapis (tetap kompatibel dengan onclick di atas)
-transactionList.addEventListener("click", function (event) {
-    const btn = event.target.closest(".delete-btn");
+// ---------- Render daftar transaksi ke DOM (incomeList + expenseList) ----------
+
+function createTransactionElement(transaction) {
+    const item = document.createElement("div");
+
+    item.classList.add("transaction-item");
+    item.classList.add(transaction.type === "income" ? "income" : "expense");
+    item.setAttribute("data-testid", "transaction-item");
+    item.setAttribute("data-id", String(transaction.id));
+    item.setAttribute("data-type", transaction.type);
+    item.setAttribute("data-category", transaction.category);
+
+    const sign = transaction.type === "income" ? "+" : "-";
+
+    item.innerHTML = `
+        <div class="transaction-info">
+            <h3>${escapeHTML(transaction.description)}</h3>
+            <p>${escapeHTML(transaction.category)} • ${escapeHTML(transaction.date)} <span class="badge badge-${escapeHTML(transaction.type)}">${escapeHTML(transaction.type)}</span></p>
+        </div>
+
+        <div class="transaction-right">
+            <div class="transaction-amount ${escapeHTML(transaction.type)}">
+                ${sign} ${escapeHTML(formatRupiah(transaction.amount))}
+            </div>
+
+            <button
+                type="button"
+                class="delete-btn"
+                data-testid="delete-button"
+                data-id="${transaction.id}"
+                data-action="delete"
+                aria-label="Delete ${escapeHTML(transaction.description)}"
+            >
+                Delete
+            </button>
+        </div>
+    `;
+
+    return item;
+}
+
+function renderListInto(container, items, isFiltered) {
+    container.innerHTML = "";
+
+    if (items.length === 0) {
+        container.innerHTML = isFiltered
+            ? `<p class="empty-message">No transactions found.</p>`
+            : `<p class="empty-message">No transactions yet.</p>`;
+        return;
+    }
+
+    items.forEach(function (transaction) {
+        container.appendChild(createTransactionElement(transaction));
+    });
+}
+
+function renderTransactions() {
+    if (!incomeListEl || !expenseListEl) return;
+
+    const isFiltered =
+        (filter && filter.value !== "all") ||
+        (categoryFilter && categoryFilter.value !== "all") ||
+        (searchInput && searchInput.value.trim() !== "");
+
+    const filtered = getFilteredTransactions();
+
+    const incomeItems = filtered.filter(function (t) { return t.type === "income"; });
+    const expenseItems = filtered.filter(function (t) { return t.type === "expense"; });
+
+    renderListInto(incomeListEl, incomeItems, isFiltered || transactions.length > 0);
+    renderListInto(expenseListEl, expenseItems, isFiltered || transactions.length > 0);
+}
+
+// Event delegation untuk tombol delete (mendukung item hasil render dinamis)
+document.addEventListener("click", function (event) {
+    const btn = event.target.closest('[data-action="delete"], .delete-btn');
     if (!btn) return;
-    // Jika dipicu via onclick, browser sudah memanggil deleteTransaction.
-    // Delegation ini memastikan tombol hasil render dinamis tetap berfungsi
-    // walau inline handler diblokir (mis. CSP). Cegah double-call:
-    // hanya jalankan jika inline handler tidak tersedia.
-    if (typeof window.deleteTransaction !== "function") {
-        const id = Number(btn.getAttribute("data-id"));
+    const id = Number(btn.getAttribute("data-id"));
+    if (Number.isFinite(id)) {
         deleteTransaction(id);
     }
 });
@@ -208,7 +215,7 @@ function deleteTransaction(id) {
     updateSummary();
 }
 
-// Agar inline onclick="deleteTransaction(...)" selalu bisa diakses
+// Agar tetap kompatibel jika ada handler lain yang memanggilnya
 window.deleteTransaction = deleteTransaction;
 
 function updateSummary() {
@@ -225,21 +232,16 @@ function updateSummary() {
 
     const balance = income - expense;
 
-    incomeElement.textContent = formatRupiah(income);
-    expenseElement.textContent = formatRupiah(expense);
-    balanceElement.textContent = formatRupiah(balance);
+    if (incomeElement) incomeElement.textContent = formatRupiah(income);
+    if (expenseElement) expenseElement.textContent = formatRupiah(expense);
+    if (balanceElement) balanceElement.textContent = formatRupiah(balance);
 }
 
-// ---------- Filter interaktif: type + kategori + search ----------
+// ---------- Search: submit form + live input ----------
 
-if (filter) {
-    filter.addEventListener("change", function () {
-        renderTransactions();
-    });
-}
-
-if (categoryFilter) {
-    categoryFilter.addEventListener("change", function () {
+if (searchForm) {
+    searchForm.addEventListener("submit", function (event) {
+        event.preventDefault();
         renderTransactions();
     });
 }
@@ -250,8 +252,43 @@ if (searchInput) {
     });
 }
 
+// ---------- Filter interaktif: type + kategori ----------
+
+function syncTabs() {
+    const tabs = document.querySelectorAll(".tab-btn");
+    const current = filter ? filter.value : "all";
+    tabs.forEach(function (tab) {
+        const active = tab.getAttribute("data-tab") === current;
+        tab.classList.toggle("active", active);
+        tab.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+}
+
+if (filter) {
+    filter.addEventListener("change", function () {
+        syncTabs();
+        renderTransactions();
+    });
+}
+
+if (categoryFilter) {
+    categoryFilter.addEventListener("change", function () {
+        renderTransactions();
+    });
+}
+
+document.querySelectorAll(".tab-btn").forEach(function (tab) {
+    tab.addEventListener("click", function () {
+        const value = tab.getAttribute("data-tab");
+        if (filter) filter.value = value;
+        syncTabs();
+        renderTransactions();
+    });
+});
+
 // ---------- Init: baca storage lalu render ----------
 
 loadTransactions();
+syncTabs();
 renderTransactions();
 updateSummary();
