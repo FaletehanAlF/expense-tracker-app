@@ -63,6 +63,7 @@ body {
     font-size: 36px;
     background: #f1f5f9;
     border: 1px solid var(--border);
+    color: var(--text);
     width: 64px;
     height: 64px;
     display: flex;
@@ -273,20 +274,8 @@ body {
     gap: 8px;
 }
 
-.list-title::before {
-    content: "";
-    width: 9px;
-    height: 9px;
-    border-radius: 999px;
-    background: var(--muted);
-}
-
-.list-title-income::before {
-    background: var(--income);
-}
-
-.list-title-expense::before {
-    background: var(--expense);
+.list-title svg {
+    flex-shrink: 0;
 }
 
 .category-tabs {
@@ -336,6 +325,9 @@ body {
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     transition: background 0.15s ease;
 }
 
