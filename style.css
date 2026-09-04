@@ -485,6 +485,10 @@ body {
         grid-template-columns: 1fr;
     }
 
+    .form-section {
+        position: static;
+    }
+
     .toolbar {
         justify-content: stretch;
         width: 100%;
@@ -512,6 +516,17 @@ body {
 @media (max-width: 640px) {
     .summary {
         grid-template-columns: 1fr;
+        gap: 16px;
+        margin: 24px 0;
+    }
+
+    .form-section,
+    .transactions-section {
+        padding: 24px 20px;
+    }
+
+    .content {
+        gap: 24px;
     }
 
     .header h1 {

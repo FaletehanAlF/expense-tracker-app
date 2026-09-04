@@ -134,8 +134,12 @@ function createTransactionElement(transaction) {
     item.setAttribute("data-category", transaction.category);
 
     const sign = transaction.type === "income" ? "+" : "-";
+    const typeIcon = transaction.type === "income"
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>';
 
     item.innerHTML = `
+        <div class="transaction-sign" aria-hidden="true">${typeIcon}</div>
         <div class="transaction-info">
             <h3>${escapeHTML(transaction.description)}</h3>
             <p>${escapeHTML(transaction.category)} • ${escapeHTML(transaction.date)} <span class="badge badge-${escapeHTML(transaction.type)}">${escapeHTML(transaction.type)}</span></p>
