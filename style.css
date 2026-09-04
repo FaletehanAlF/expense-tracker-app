@@ -177,14 +177,14 @@ body {
 .btn {
     width: 100%;
     border: none;
-    padding: 13px;
+    padding: 14px;
     border-radius: 10px;
     background: #0f172a;
     color: #ffffff;
     font-size: 14.5px;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 6px;
+    margin-top: 12px;
     transition: background 0.15s ease;
 }
 
@@ -202,8 +202,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 18px;
+    gap: 16px;
+    margin-bottom: 24px;
     flex-wrap: wrap;
 }
 
@@ -214,7 +214,7 @@ body {
 
 .toolbar {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     flex-wrap: wrap;
     flex: 1;
     justify-content: flex-end;
@@ -222,7 +222,7 @@ body {
 
 .search-form {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex: 1;
     min-width: 220px;
     max-width: 340px;
@@ -231,7 +231,7 @@ body {
 .search-input {
     min-width: 0;
     flex: 1;
-    padding: 10px 12px;
+    padding: 12px 14px;
     border: 1.5px solid #cbd5e1;
     border-radius: 10px;
     font-size: 14px;
@@ -250,19 +250,19 @@ body {
 .transaction-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
 .transaction-list-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 32px;
 }
 
 .list-section {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .list-title {
