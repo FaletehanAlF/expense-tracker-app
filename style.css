@@ -25,7 +25,7 @@ body {
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .container {
@@ -38,7 +38,7 @@ body {
 .header {
     background: #ffffff;
     color: var(--text);
-    padding: 28px 0;
+    padding: 36px 0;
     border-bottom: 1px solid var(--border);
 }
 
@@ -77,13 +77,13 @@ body {
 .summary {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-    margin: 28px 0;
+    gap: 24px;
+    margin: 36px 0;
 }
 
 .summary-card {
     background: var(--card);
-    padding: 20px 22px;
+    padding: 28px 30px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
@@ -110,10 +110,10 @@ body {
 
 .content {
     display: grid;
-    grid-template-columns: 350px 1fr;
-    gap: 22px;
+    grid-template-columns: 370px 1fr;
+    gap: 32px;
     align-items: start;
-    padding-bottom: 10px;
+    padding-bottom: 48px;
 }
 
 .form-section,
@@ -121,28 +121,33 @@ body {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 24px;
+    padding: 32px;
     box-shadow: var(--shadow);
+}
+
+.form-section {
+    position: sticky;
+    top: 24px;
 }
 
 .form-section h2,
 .transactions-section h2 {
-    margin-bottom: 18px;
-    font-size: 19px;
+    margin-bottom: 24px;
+    font-size: 20px;
     letter-spacing: -0.01em;
 }
 
 /* Form */
 
 .form-group {
-    margin-bottom: 14px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
     display: block;
     font-size: 13.5px;
     font-weight: 700;
-    margin-bottom: 7px;
+    margin-bottom: 8px;
 }
 
 .form-group input,
@@ -150,7 +155,7 @@ body {
 #filter,
 #category-filter {
     width: 100%;
-    padding: 11px 12px;
+    padding: 13px 14px;
     border: 1.5px solid #cbd5e1;
     border-radius: 10px;
     font-size: 14px;
@@ -442,7 +447,7 @@ body {
 }
 
 .delete-btn:hover {
-    background: #fee2e2;
+    background: #e2e8f0;
 }
 
 /* Footer */
