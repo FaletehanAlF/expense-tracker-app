@@ -1,5 +1,7 @@
 let transactions = [];
 let editingTransactionId = null;
+let lastDeleted = null;
+let toastTimer = null;
 
 const STORAGE_KEY = 'expense-tracker-data';
 const RENDER_EVENT = 'transaction:updated';
@@ -34,6 +36,19 @@ function loadTransactions() {
   }
 }
 
+function getLocalDateString() {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return d.getFullYear() + '-' + m + '-' + day;
+}
+
+function setDefaultDate() {
+  if (dateInput && !dateInput.value) {
+    dateInput.value = getLocalDateString();
+  }
+}
+
 const incomeList = document.getElementById('incomeList');
 const expenseList = document.getElementById('expenseList');
 const transactionForm = document.getElementById('transactionForm');
@@ -42,30 +57,156 @@ const titleInput = document.getElementById('transactionFormTitleInput');
 const amountInput = document.getElementById('transactionFormAmountInput');
 const dateInput = document.getElementById('transactionFormDateInput');
 const typeInput = document.getElementById('transactionFormTypeSelect');
+const submitButton = transactionForm
+  ? transactionForm.querySelector('[data-testid="transactionFormSubmitButton"]')
+  : null;
+const cancelEditButton = document.getElementById('cancelEditButton');
 
 const searchForm = document.getElementById('searchTransactionForm');
 const searchInput = document.getElementById('searchTransactionFormTitleInput');
+
+const sortSelect = document.getElementById('sortSelect');
+const resultCount = document.getElementById('resultCount');
+
+const toast = document.getElementById('toast');
+const toastMessage = document.getElementById('toastMessage');
+const undoButton = document.getElementById('undoButton');
 
 const balanceElement = document.querySelector('.tracker-summary__balance-amount');
 const incomeElement = document.querySelector('.tracker-summary__stat-amount--income');
 const expenseElement = document.querySelector('.tracker-summary__stat-amount--expense');
 
-function renderTransactions(data = transactions) {
+function setEditMode(isEditing) {
+  if (submitButton) submitButton.textContent = isEditing ? 'Update' : 'Simpan';
+  if (cancelEditButton) cancelEditButton.hidden = !isEditing;
+}
+
+function getVisibleTransactions() {
+  const keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
+  const mode = sortSelect ? sortSelect.value : 'newest';
+
+  const visible = transactions.filter((t) =>
+    keyword === '' || String(t.title || '').toLowerCase().includes(keyword),
+  );
+
+  visible.sort((a, b) => {
+    if (mode === 'oldest') {
+      return String(a.date || '').localeCompare(String(b.date || '')) || a.id - b.id;
+    }
+    if (mode === 'largest') {
+      return Number(b.amount) - Number(a.amount) || b.id - a.id;
+    }
+    if (mode === 'smallest') {
+      return Number(a.amount) - Number(b.amount) || a.id - b.id;
+    }
+    return String(b.date || '').localeCompare(String(a.date || '')) || b.id - a.id;
+  });
+
+  return visible;
+}
+
+function createSvgIcon(children) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('width', '28');
+  svg.setAttribute('height', '28');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '2');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  svg.setAttribute('aria-hidden', 'true');
+  children.forEach((def) => {
+    const el = document.createElementNS(ns, def[0]);
+    Object.keys(def[1]).forEach((key) => el.setAttribute(key, def[1][key]));
+    svg.appendChild(el);
+  });
+  return svg;
+}
+
+function appendEmptyState(container, text, isSearch) {
+  const empty = document.createElement('div');
+  empty.classList.add('tracker-empty');
+  const icon = isSearch
+    ? createSvgIcon([
+        ['circle', { cx: '11', cy: '11', r: '8' }],
+        ['line', { x1: '21', y1: '21', x2: '16.65', y2: '16.65' }],
+      ])
+    : createSvgIcon([
+        ['polyline', { points: '22 12 16 12 14 15 10 15 8 12 2 12' }],
+        ['path', { d: 'M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z' }],
+      ]);
+  const message = document.createElement('p');
+  message.textContent = text;
+  empty.append(icon, message);
+  container.appendChild(empty);
+}
+
+function buildTitleElement(titleText, keyword) {
+  const title = document.createElement('h3');
+  title.setAttribute('data-testid', 'transactionItemTitle');
+  if (!keyword) {
+    title.textContent = titleText;
+    return title;
+  }
+  const lower = String(titleText).toLowerCase();
+  let from = 0;
+  let pos = lower.indexOf(keyword, from);
+  if (pos === -1) {
+    title.textContent = titleText;
+    return title;
+  }
+  while (pos !== -1) {
+    if (pos > from) {
+      title.appendChild(document.createTextNode(String(titleText).slice(from, pos)));
+    }
+    const mark = document.createElement('mark');
+    mark.classList.add('tracker-highlight');
+    mark.textContent = String(titleText).slice(pos, pos + keyword.length);
+    title.appendChild(mark);
+    from = pos + keyword.length;
+    pos = lower.indexOf(keyword, from);
+  }
+  if (from < String(titleText).length) {
+    title.appendChild(document.createTextNode(String(titleText).slice(from)));
+  }
+  return title;
+}
+
+function renderTransactions(data = transactions, keyword = '') {
   if (!incomeList || !expenseList) return;
 
   incomeList.innerHTML = '';
   expenseList.innerHTML = '';
 
   const list = Array.isArray(data) ? data : [];
+  const isSearch = String(keyword || '').trim() !== '';
+
+  const incomeItems = list.filter((t) => t.type === 'income');
+  const expenseItems = list.filter((t) => t.type !== 'income');
+
+  if (incomeItems.length === 0) {
+    appendEmptyState(
+      incomeList,
+      isSearch ? 'Tidak ada pemasukan yang cocok.' : 'Belum ada pemasukan.',
+      isSearch,
+    );
+  }
+  if (expenseItems.length === 0) {
+    appendEmptyState(
+      expenseList,
+      isSearch ? 'Tidak ada pengeluaran yang cocok.' : 'Belum ada pengeluaran.',
+      isSearch,
+    );
+  }
 
   list.forEach((transaction) => {
     const card = document.createElement('div');
     card.setAttribute('data-testid', 'transactionItem');
     card.classList.add('tracker-transaction-item');
 
-    const title = document.createElement('h3');
-    title.setAttribute('data-testid', 'transactionItemTitle');
-    title.textContent = transaction.title;
+    const title = buildTitleElement(transaction.title, isSearch ? String(keyword).trim().toLowerCase() : '');
 
     const amount = document.createElement('p');
     amount.setAttribute('data-testid', 'transactionItemAmount');
@@ -125,6 +266,23 @@ function renderTransactions(data = transactions) {
   });
 }
 
+function updateResultCount(visibleCount, totalCount) {
+  if (!resultCount) return;
+  if (totalCount === 0) {
+    resultCount.textContent = 'Belum ada transaksi.';
+    return;
+  }
+  resultCount.textContent = `Menampilkan ${visibleCount} dari ${totalCount} transaksi.`;
+}
+
+function refreshView() {
+  const keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
+  const visible = getVisibleTransactions();
+  renderTransactions(visible, keyword);
+  updateSummary();
+  updateResultCount(visible.length, transactions.length);
+}
+
 if (transactionForm) {
   transactionForm.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -150,6 +308,7 @@ if (transactionForm) {
         };
       }
       editingTransactionId = null;
+      setEditMode(false);
     } else {
       transactions.push({
         id: generateId(),
@@ -164,6 +323,7 @@ if (transactionForm) {
     document.dispatchEvent(new Event(RENDER_EVENT));
 
     transactionForm.reset();
+    setDefaultDate();
     if (titleInput) titleInput.focus();
   });
 }
@@ -202,16 +362,39 @@ function updateSummary() {
   if (expenseElement) expenseElement.textContent = formatCurrency(totalExpense);
 }
 
+function showToast() {
+  if (!toast) return;
+  if (toastMessage) toastMessage.textContent = 'Transaksi dihapus.';
+  toast.hidden = false;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () {
+    lastDeleted = null;
+    hideToast();
+  }, 5000);
+}
+
+function hideToast() {
+  if (!toast) return;
+  toast.hidden = true;
+}
+
 function deleteTransaction(id) {
+  const index = transactions.findIndex((transaction) => transaction.id === id);
+  if (index === -1) return;
+  lastDeleted = { item: transactions[index], index };
+
   transactions = transactions.filter((transaction) => transaction.id !== id);
 
   if (editingTransactionId === id) {
     editingTransactionId = null;
+    setEditMode(false);
     if (transactionForm) transactionForm.reset();
+    setDefaultDate();
   }
 
   saveTransactions();
   document.dispatchEvent(new Event(RENDER_EVENT));
+  showToast();
 }
 
 function editTransaction(id) {
@@ -224,20 +407,12 @@ function editTransaction(id) {
   typeInput.value = transaction.type;
 
   editingTransactionId = id;
+  setEditMode(true);
   titleInput.focus();
 }
 
 document.addEventListener(RENDER_EVENT, function () {
-  const keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
-  if (keyword !== '') {
-    const filtered = transactions.filter((t) =>
-      String(t.title || '').toLowerCase().includes(keyword),
-    );
-    renderTransactions(filtered);
-  } else {
-    renderTransactions();
-  }
-  updateSummary();
+  refreshView();
 });
 
 function toggleTransactionType(id) {
@@ -252,42 +427,57 @@ function toggleTransactionType(id) {
 
 if (searchInput) {
   searchInput.addEventListener('input', function () {
-    const keyword = this.value.trim().toLowerCase();
-
-    if (keyword === '') {
-      resetSearch();
-      return;
-    }
-
-    const filteredTransactions = transactions.filter((transaction) =>
-      String(transaction.title || '').toLowerCase().includes(keyword),
-    );
-
-    renderTransactions(filteredTransactions);
+    refreshView();
   });
 }
 
 if (searchForm) {
   searchForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    if (!searchInput) return;
-    const keyword = searchInput.value.trim().toLowerCase();
-    if (keyword === '') {
-      renderTransactions();
-    } else {
-      const filtered = transactions.filter((t) =>
-        String(t.title || '').toLowerCase().includes(keyword),
-      );
-      renderTransactions(filtered);
-    }
+    refreshView();
   });
 }
 
 function resetSearch() {
   if (searchInput && searchInput.value.trim() === '') {
-    renderTransactions();
+    refreshView();
   }
 }
 
+if (sortSelect) {
+  sortSelect.addEventListener('change', function () {
+    refreshView();
+  });
+}
+
+if (cancelEditButton) {
+  cancelEditButton.addEventListener('click', function () {
+    editingTransactionId = null;
+    if (transactionForm) transactionForm.reset();
+    setDefaultDate();
+    setEditMode(false);
+    if (titleInput) titleInput.focus();
+  });
+}
+
+if (undoButton) {
+  undoButton.addEventListener('click', function () {
+    if (!lastDeleted) {
+      hideToast();
+      return;
+    }
+    const restored = lastDeleted;
+    lastDeleted = null;
+    if (toastTimer) clearTimeout(toastTimer);
+    const pos = Math.min(Math.max(restored.index, 0), transactions.length);
+    transactions.splice(pos, 0, restored.item);
+    saveTransactions();
+    document.dispatchEvent(new Event(RENDER_EVENT));
+    hideToast();
+  });
+}
+
 loadTransactions();
+setDefaultDate();
+setEditMode(false);
 document.dispatchEvent(new Event(RENDER_EVENT));
