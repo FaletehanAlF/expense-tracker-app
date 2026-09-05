@@ -1,13 +1,3 @@
-/**
- * ========================================================
- * Expense Tracker App — main.js
- * Memenuhi seluruh rubrik Dicoding (Basic → Advanced):
- * - Kriteria 1: DOM form + daftar, validasi alert, dashboard ringkasan
- * - Kriteria 2: localStorage JSON, hapus, edit, custom event
- * - Kriteria 3: ubah tipe, pencarian live + reset saat dikosongkan
- * ========================================================
- */
-
 let transactions = [];
 let editingTransactionId = null;
 
@@ -44,8 +34,6 @@ function loadTransactions() {
   }
 }
 
-/* ---------- Ambil elemen DOM (id sesuai starter project) ---------- */
-
 const incomeList = document.getElementById('incomeList');
 const expenseList = document.getElementById('expenseList');
 const transactionForm = document.getElementById('transactionForm');
@@ -61,8 +49,6 @@ const searchInput = document.getElementById('searchTransactionFormTitleInput');
 const balanceElement = document.querySelector('.tracker-summary__balance-amount');
 const incomeElement = document.querySelector('.tracker-summary__stat-amount--income');
 const expenseElement = document.querySelector('.tracker-summary__stat-amount--expense');
-
-/* ---------- Render daftar transaksi (wajib createElement) ---------- */
 
 function renderTransactions(data = transactions) {
   if (!incomeList || !expenseList) return;
@@ -139,8 +125,6 @@ function renderTransactions(data = transactions) {
   });
 }
 
-/* ---------- Submit form tambah / update ---------- */
-
 if (transactionForm) {
   transactionForm.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -184,8 +168,6 @@ if (transactionForm) {
   });
 }
 
-/* ---------- Validasi: alert jika judul kosong / nominal < 1 ---------- */
-
 function validateTransaction(title, amount) {
   if (!title || title.trim() === '') {
     alert('Judul transaksi tidak boleh kosong!');
@@ -199,8 +181,6 @@ function validateTransaction(title, amount) {
 
   return true;
 }
-
-/* ---------- Dashboard ringkasan ---------- */
 
 function updateSummary() {
   let totalIncome = 0;
@@ -222,8 +202,6 @@ function updateSummary() {
   if (expenseElement) expenseElement.textContent = formatCurrency(totalExpense);
 }
 
-/* ---------- Hapus ---------- */
-
 function deleteTransaction(id) {
   transactions = transactions.filter((transaction) => transaction.id !== id);
 
@@ -235,8 +213,6 @@ function deleteTransaction(id) {
   saveTransactions();
   document.dispatchEvent(new Event(RENDER_EVENT));
 }
-
-/* ---------- Edit: isi form otomatis ---------- */
 
 function editTransaction(id) {
   const transaction = transactions.find((item) => item.id === id);
@@ -251,10 +227,7 @@ function editTransaction(id) {
   titleInput.focus();
 }
 
-/* ---------- Custom event: satu listener untuk render + summary ---------- */
-
 document.addEventListener(RENDER_EVENT, function () {
-  // Jika sedang mencari, tetap hormati kata kunci agar hasil tidak meloncat
   const keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
   if (keyword !== '') {
     const filtered = transactions.filter((t) =>
@@ -267,8 +240,6 @@ document.addEventListener(RENDER_EVENT, function () {
   updateSummary();
 });
 
-/* ---------- Ubah tipe income <-> expense ---------- */
-
 function toggleTransactionType(id) {
   const transaction = transactions.find((item) => item.id === id);
   if (!transaction) return;
@@ -278,8 +249,6 @@ function toggleTransactionType(id) {
   saveTransactions();
   document.dispatchEvent(new Event(RENDER_EVENT));
 }
-
-/* ---------- Pencarian: live filter by judul ---------- */
 
 if (searchInput) {
   searchInput.addEventListener('input', function () {
@@ -298,7 +267,6 @@ if (searchInput) {
   });
 }
 
-// Cegah reload saat form pencarian di-submit (tombol Cari / tekan Enter)
 if (searchForm) {
   searchForm.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -315,15 +283,11 @@ if (searchForm) {
   });
 }
 
-/* ---------- Reset pencarian: tampilkan semua saat dikosongkan ---------- */
-
 function resetSearch() {
   if (searchInput && searchInput.value.trim() === '') {
     renderTransactions();
   }
 }
-
-/* ---------- Init ---------- */
 
 loadTransactions();
 document.dispatchEvent(new Event(RENDER_EVENT));

@@ -14,7 +14,7 @@
       <h1 class="tracker-header__title">Tracker<span style="color:var(--accent-blue)">.io</span></h1>
       <div class="tracker-header__user">
         <div class="tracker-header__user-info">
-          <span class="tracker-header__greeting">Halo, <strong><a class="tracker-header__profile-link" href="https://www.dicoding.com/users/falennn_af" target="_blank" rel="noopener noreferrer" title="Lihat profil Dicoding Faletehan Al Farabi">Faletehan Al Farabi (falennn_af)<svg class="tracker-header__external-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></strong></span>
+          <span class="tracker-header__greeting"><strong><a class="tracker-header__profile-link" href="https://www.dicoding.com/users/falennn_af" target="_blank" rel="noopener noreferrer" title="Lihat profil Dicoding Faletehan Al Farabi">Faletehan Al Farabi (falennn_af)<svg class="tracker-header__external-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></strong></span>
           <span class="tracker-header__date">Bulan Ini</span>
         </div>
         <a class="tracker-header__avatar-link" href="https://www.dicoding.com/users/falennn_af" target="_blank" rel="noopener noreferrer" title="Lihat profil Dicoding Faletehan Al Farabi" aria-label="Lihat profil Dicoding Faletehan Al Farabi">
@@ -24,6 +24,21 @@
         </a>
       </div>
     </header>
+
+    <nav class="tracker-nav" aria-label="Navigasi utama">
+      <a class="tracker-nav__link" href="#summary-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a class="tracker-nav__link" href="#form-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Tambah Transaksi
+      </a>
+      <a class="tracker-nav__link" href="#history-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Riwayat
+      </a>
+    </nav>
 
     <main>
       <section class="tracker-summary" aria-labelledby="summary-heading">
@@ -91,7 +106,6 @@
             </div>
             <!-- Jangan ubah atau hapus atribut data-testid pada elemen berikut -->
             <div id="incomeList" data-testid="incomeList" class="tracker-transaction-list__container">
-              <!-- Kartu transaksi pemasukan akan disisipkan di sini oleh JavaScript -->
             </div>
           </div>
 
@@ -101,7 +115,6 @@
             </div>
             <!-- Jangan ubah atau hapus atribut data-testid pada elemen berikut -->
             <div id="expenseList" data-testid="expenseList" class="tracker-transaction-list__container">
-              <!-- Kartu transaksi pengeluaran akan disisipkan di sini oleh JavaScript -->
             </div>
           </div>
         </div>
@@ -110,7 +123,24 @@
     </main>
 
     <footer class="tracker-footer">
-      <p>&#169; 2026 Tracker.io. Disusun sebagai Submission Front-End Web.</p>
+      <div class="tracker-footer__inner">
+        <div class="tracker-footer__brand">
+          <span class="tracker-footer__logo">Tracker<span class="tracker-footer__logo-accent">.io</span></span>
+          <span class="tracker-footer__tagline">Catat pemasukan dan pengeluaran harian dengan rapi.</span>
+        </div>
+        <p class="tracker-footer__credit">Created by <strong>Faletehan Al Farabi</strong></p>
+        <div class="tracker-footer__links">
+          <a class="tracker-footer__link" href="https://github.com/FaletehanAlF" target="_blank" rel="noopener noreferrer" title="Profil GitHub Faletehan Al Farabi">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.27 5.66.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+            GitHub
+          </a>
+          <a class="tracker-footer__link" href="https://www.dicoding.com/users/falennn_af" target="_blank" rel="noopener noreferrer" title="Profil Dicoding Faletehan Al Farabi">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Dicoding
+          </a>
+        </div>
+        <p class="tracker-footer__meta">&#169; 2026 Tracker.io &#183; Submission Front-End Web</p>
+      </div>
     </footer>
 
   </div>
