@@ -27,15 +27,15 @@ This project was created as part of the learning process and submission for the 
 expense-tracker-web/
 ├── index.html
 ├── style.css
-├── script.js
+├── main.js
 
 How to Run
 
 1. Clone this repository:
-git clone https://github.com/USERNAME/expense-tracker-web.git
+git clone https://github.com/USERNAME/expense-tracker-app.git
 
 2. Navigate to the project directory:
-cd expense-tracker-web
+cd expense-tracker-app
 
 3. Open index.html in your browser.
 You can also use the Live Server extension in Visual Studio Code to run the application.
