@@ -396,6 +396,39 @@ body {
   transform: scale(0.98);
 }
 
+.tracker-form__cancel {
+  width: 100%;
+  border: 1px solid var(--border-light);
+  background: var(--bg-page);
+  color: var(--text-dark);
+  padding: 0.8rem 1.4rem;
+  border-radius: 12px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  margin-top: 0.6rem;
+  transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.tracker-form__cancel:hover {
+  background: #e9e9ec;
+  transform: translateY(-1px);
+}
+
+.tracker-form__cancel:active {
+  transform: scale(0.98);
+}
+
+.tracker-form__cancel[hidden] {
+  display: none;
+}
+
+.tracker-form__cancel:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
 .tracker-history {
   display: flex;
   flex-direction: column;
@@ -443,6 +476,63 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+}
+
+.tracker-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--card-radius);
+  padding: 0.7rem 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.tracker-result-count {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.tracker-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.tracker-sort svg {
+  flex-shrink: 0;
+}
+
+.tracker-sort__select {
+  width: auto;
+  padding: 0.5rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: #fcfcfc;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.tracker-sort__select:hover {
+  border-color: #d4d4d8;
+}
+
+.tracker-sort__select:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
 }
 
 .tracker-transaction-list__header {
@@ -548,6 +638,93 @@ body {
 
 .tracker-button--delete {
   background: #dc2626;
+}
+
+.tracker-highlight {
+  background: #fef08a;
+  border-radius: 4px;
+  padding: 0 2px;
+}
+
+.tracker-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  padding: 2rem 1.25rem;
+  background: #f9fafb;
+  border: 1px dashed var(--border-light);
+  border-radius: 12px;
+}
+
+.tracker-empty svg {
+  opacity: 0.6;
+}
+
+.tracker-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--text-dark);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.8rem 1rem 0.8rem 1.25rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  z-index: 50;
+  max-width: min(92vw, 420px);
+  animation: tracker-toast-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tracker-toast[hidden] {
+  display: none;
+}
+
+.tracker-toast__action {
+  border: none;
+  background: #fff;
+  color: var(--text-dark);
+  font-family: inherit;
+  font-size: 0.83rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.tracker-toast__action:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.tracker-toast__action:active {
+  transform: scale(0.97);
+}
+
+.tracker-toast__action:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@keyframes tracker-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 .tracker-footer {
@@ -731,6 +908,25 @@ body {
 @media (max-width: 640px) {
   .tracker-search__form {
     flex-direction: column;
+  }
+
+  .tracker-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tracker-sort {
+    justify-content: space-between;
+  }
+
+  .tracker-sort__select {
+    flex: 1;
+  }
+
+  .tracker-toast {
+    bottom: 0.75rem;
+    width: calc(100% - 1.5rem);
+    justify-content: space-between;
   }
 
   .tracker-search__submit {
