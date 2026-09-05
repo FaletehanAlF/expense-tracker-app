@@ -46,17 +46,17 @@
 
         <div class="tracker-summary__balance">
           <h3 class="tracker-summary__label">Saldo Saat Ini</h3>
-          <p class="tracker-summary__balance-amount">Rp 0</p>
+          <p class="tracker-summary__balance-amount" aria-live="polite">Rp 0</p>
         </div>
 
         <div class="tracker-summary__stat">
           <h3 class="tracker-summary__label">Pemasukan</h3>
-          <p class="tracker-summary__stat-amount tracker-summary__stat-amount--income">Rp 0</p>
+          <p class="tracker-summary__stat-amount tracker-summary__stat-amount--income" aria-live="polite">Rp 0</p>
         </div>
 
         <div class="tracker-summary__stat">
           <h3 class="tracker-summary__label">Pengeluaran</h3>
-          <p class="tracker-summary__stat-amount tracker-summary__stat-amount--expense">Rp 0</p>
+          <p class="tracker-summary__stat-amount tracker-summary__stat-amount--expense" aria-live="polite">Rp 0</p>
         </div>
       </section>
 
@@ -85,6 +85,7 @@
               </select>
             </div>
             <button type="submit" data-testid="transactionFormSubmitButton" class="tracker-form__submit">Simpan</button>
+            <button type="button" id="cancelEditButton" class="tracker-form__cancel" hidden>Batalkan Edit</button>
           </form>
         </div>
       </section>
@@ -97,6 +98,20 @@
             <input type="search" id="searchTransactionFormTitleInput" data-testid="searchTransactionFormTitleInput" class="tracker-form__input" placeholder="Cari transaksi berdasarkan judul..." aria-label="Kata kunci pencarian transaksi" autocomplete="off">
             <button type="submit" data-testid="searchTransactionFormSubmitButton" class="tracker-search__submit" aria-label="Mulai Pencarian">Cari</button>
           </form>
+        </div>
+
+        <div class="tracker-toolbar">
+          <p class="tracker-result-count" id="resultCount" aria-live="polite">Belum ada transaksi.</p>
+          <label class="tracker-sort" for="sortSelect">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="16" y2="6"/><line x1="4" y1="12" x2="10" y2="12"/><line x1="4" y1="18" x2="7" y2="18"/><polyline points="15 15 18 18 21 15"/><line x1="18" y1="15" x2="18" y2="21"/></svg>
+            <span>Urutkan</span>
+            <select id="sortSelect" class="tracker-sort__select" aria-label="Urutkan transaksi">
+              <option value="newest">Terbaru</option>
+              <option value="oldest">Terlama</option>
+              <option value="largest">Nominal terbesar</option>
+              <option value="smallest">Nominal terkecil</option>
+            </select>
+          </label>
         </div>
 
         <div class="tracker-history__grid">
