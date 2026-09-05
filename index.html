@@ -1,183 +1,116 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Tracker</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker App</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header class="header">
-        <div class="container header-inner">
-            <div>
-                <h1>Expense Tracker</h1>
-                <p>Manage your expenses easily and efficiently.</p>
-            </div>
-            <div class="header-badge" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></div>
+  <div class="tracker-app">
+
+    <header class="tracker-header">
+      <h1 class="tracker-header__title">Tracker<span style="color:var(--accent-blue)">.io</span></h1>
+      <div class="tracker-header__user">
+        <div class="tracker-header__user-info">
+          <span class="tracker-header__greeting">Halo, <strong>Faletehan Al Farabi (FaletehanAlF)</strong></span>
+          <span class="tracker-header__date">Bulan Ini</span>
         </div>
+        <div class="tracker-header__avatar" role="img" aria-label="Avatar Pengguna" aria-hidden="true">👤</div>
+      </div>
     </header>
 
-    <main class="container">
+    <main>
+      <section class="tracker-summary" aria-labelledby="summary-heading">
+        <h2 id="summary-heading" class="visually-hidden">Ringkasan Keuangan</h2>
 
-        <section class="summary" aria-label="Ringkasan keuangan">
-            <div class="summary-card">
-                <span>Total Balance</span>
-                <h2 id="balance" data-testid="balance">Rp 0</h2>
+        <div class="tracker-summary__balance">
+          <h3 class="tracker-summary__label">Saldo Saat Ini</h3>
+          <p class="tracker-summary__balance-amount">Rp 0</p>
+        </div>
+
+        <div class="tracker-summary__stat">
+          <h3 class="tracker-summary__label">Pemasukan</h3>
+          <p class="tracker-summary__stat-amount tracker-summary__stat-amount--income">Rp 0</p>
+        </div>
+
+        <div class="tracker-summary__stat">
+          <h3 class="tracker-summary__label">Pengeluaran</h3>
+          <p class="tracker-summary__stat-amount tracker-summary__stat-amount--expense">Rp 0</p>
+        </div>
+      </section>
+
+      <section class="tracker-form-section" aria-labelledby="form-heading">
+        <div class="tracker-form-section__card">
+          <h2 id="form-heading" class="tracker-form-section__heading">Tambah Pencatatan Baru</h2>
+
+          <form id="transactionForm" data-testid="transactionForm" class="tracker-form">
+            <div class="tracker-form__field">
+              <label class="tracker-form__label" for="transactionFormTitleInput">Keterangan</label>
+              <input type="text" id="transactionFormTitleInput" data-testid="transactionFormTitleInput" class="tracker-form__input" placeholder="Misal: Makan siang..." autocomplete="off">
             </div>
-
-            <div class="summary-card summary-income">
-                <span>Total Income</span>
-                <h2 id="income" data-testid="income">Rp 0</h2>
+            <div class="tracker-form__field">
+              <label class="tracker-form__label" for="transactionFormAmountInput">Nominal (Rp)</label>
+              <input type="number" id="transactionFormAmountInput" data-testid="transactionFormAmountInput" class="tracker-form__input" placeholder="50000" min="1" inputmode="numeric">
             </div>
-
-            <div class="summary-card summary-expense">
-                <span>Total Expense</span>
-                <h2 id="expense" data-testid="expense">Rp 0</h2>
+            <div class="tracker-form__field">
+              <label class="tracker-form__label" for="transactionFormDateInput">Tanggal</label>
+              <input type="date" id="transactionFormDateInput" data-testid="transactionFormDateInput" class="tracker-form__input">
             </div>
-        </section>
-
-        <section class="content">
-
-            <div class="form-section">
-                <h2>Add Transaction</h2>
-                <p class="card-desc">Record a new income or expense.</p>
-
-                <form id="transaction-form" data-testid="transactionForm">
-
-                    <div class="form-group">
-                        <label for="description">Title</label>
-                        <input
-                            type="text"
-                            id="description"
-                            data-testid="transactionFormTitleInput"
-                            placeholder="Enter transaction title"
-                            autocomplete="off"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="amount">Amount</label>
-                        <input
-                            type="number"
-                            id="amount"
-                            data-testid="transactionFormAmountInput"
-                            placeholder="Enter amount"
-                            min="1"
-                            inputmode="decimal"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="date">Date</label>
-                        <input
-                            type="date"
-                            id="date"
-                            data-testid="transactionFormDateInput"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="type">Type</label>
-                        <select id="type" data-testid="transactionFormTypeSelect" required>
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="category">Category</label>
-                        <select id="category" data-testid="category-input" required>
-                            <option value="">Select category</option>
-                            <option value="Food">Food</option>
-                            <option value="Transportation">Transportation</option>
-                            <option value="Shopping">Shopping</option>
-                            <option value="Bills">Bills</option>
-                            <option value="Entertainment">Entertainment</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn" data-testid="transactionFormSubmitButton">
-                        Add Transaction
-                    </button>
-
-                </form>
+            <div class="tracker-form__field">
+              <label class="tracker-form__label" for="transactionFormTypeSelect">Klasifikasi</label>
+              <select id="transactionFormTypeSelect" data-testid="transactionFormTypeSelect" class="tracker-form__input">
+                <option value="income">Uang Masuk (+)</option>
+                <option value="expense">Uang Keluar (-)</option>
+              </select>
             </div>
+            <button type="submit" data-testid="transactionFormSubmitButton" class="tracker-form__submit">Simpan</button>
+          </form>
+        </div>
+      </section>
 
-            <div class="transactions-section">
-                <div class="section-header">
-                    <h2>Transactions</h2>
+      <section class="tracker-history" aria-labelledby="history-heading">
+        <h2 id="history-heading" class="visually-hidden">Riwayat Transaksi</h2>
 
-                    <div class="toolbar">
-                        <form id="search-form" data-testid="searchTransactionForm" class="search-form" role="search">
-                            <label for="search" class="sr-only">Search transactions</label>
-                            <input
-                                type="search"
-                                id="search"
-                                data-testid="searchTransactionFormTitleInput"
-                                class="search-input"
-                                placeholder="Search transaction..."
-                                autocomplete="off"
-                            >
-                            <button type="submit" class="btn-search" data-testid="searchTransactionFormSubmitButton">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                Search
-                            </button>
-                        </form>
-                        <div class="filter-row">
-                            <select id="filter" data-testid="filter-type" aria-label="Filter by type">
-                                <option value="all">All</option>
-                                <option value="income">Income</option>
-                                <option value="expense">Expense</option>
-                            </select>
-                            <select id="category-filter" data-testid="filter-category" aria-label="Filter by category">
-                                <option value="all">All Categories</option>
-                                <option value="Food">Food</option>
-                                <option value="Transportation">Transportation</option>
-                                <option value="Shopping">Shopping</option>
-                                <option value="Bills">Bills</option>
-                                <option value="Entertainment">Entertainment</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+        <div class="tracker-search">
+          <form id="searchTransactionForm" data-testid="searchTransactionForm" class="tracker-search__form" role="search">
+            <input type="search" id="searchTransactionFormTitleInput" data-testid="searchTransactionFormTitleInput" class="tracker-form__input" placeholder="Cari transaksi berdasarkan judul..." aria-label="Kata kunci pencarian transaksi" autocomplete="off">
+            <button type="submit" data-testid="searchTransactionFormSubmitButton" class="tracker-search__submit" aria-label="Mulai Pencarian">Cari</button>
+          </form>
+        </div>
 
-                <div class="category-tabs" role="tablist" aria-label="Filter transactions by type">
-                    <button type="button" class="tab-btn active" data-tab="all" aria-pressed="true">All</button>
-                    <button type="button" class="tab-btn" data-tab="income" aria-pressed="false">Income</button>
-                    <button type="button" class="tab-btn" data-tab="expense" aria-pressed="false">Expense</button>
-                </div>
-
-                <div id="transaction-list" class="transaction-list-wrapper">
-                    <section class="list-section" aria-label="Income transactions">
-                        <h3 class="list-title list-title-income"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>Income</h3>
-                        <div id="incomeList" data-testid="incomeList" class="transaction-list">
-                            <p class="empty-message">No transactions yet.</p>
-                        </div>
-                    </section>
-
-                    <section class="list-section" aria-label="Expense transactions">
-                        <h3 class="list-title list-title-expense"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>Expense</h3>
-                        <div id="expenseList" data-testid="expenseList" class="transaction-list">
-                            <p class="empty-message">No transactions yet.</p>
-                        </div>
-                    </section>
-                </div>
+        <div class="tracker-history__grid">
+          <div class="tracker-transaction-list">
+            <div class="tracker-transaction-list__header">
+              <h3 class="tracker-transaction-list__title">Arus Pemasukan</h3>
             </div>
+            <!-- Jangan ubah atau hapus atribut data-testid pada elemen berikut -->
+            <div id="incomeList" data-testid="incomeList" class="tracker-transaction-list__container">
+              <!-- Kartu transaksi pemasukan akan disisipkan di sini oleh JavaScript -->
+            </div>
+          </div>
 
-        </section>
+          <div class="tracker-transaction-list">
+            <div class="tracker-transaction-list__header">
+              <h3 class="tracker-transaction-list__title">Arus Pengeluaran</h3>
+            </div>
+            <!-- Jangan ubah atau hapus atribut data-testid pada elemen berikut -->
+            <div id="expenseList" data-testid="expenseList" class="tracker-transaction-list__container">
+              <!-- Kartu transaksi pengeluaran akan disisipkan di sini oleh JavaScript -->
+            </div>
+          </div>
+        </div>
+      </section>
 
     </main>
 
-    <footer class="footer">
-        <p>Expense Tracker App</p>
+    <footer class="tracker-footer">
+      <p>&#169; 2026 Tracker.io. Disusun sebagai Submission Front-End Web.</p>
     </footer>
 
-    <script src="script.js"></script>
+  </div>
+
+  <script src="main.js"></script>
 </body>
 </html>
