@@ -2,8 +2,11 @@ let transactions = [];
 let editingTransactionId = null;
 let lastDeleted = null;
 let toastTimer = null;
+let activities = [];
 
 const STORAGE_KEY = 'expense-tracker-data';
+const ACTIVITY_KEY = 'expense-tracker-activity';
+const ACTIVITY_LIMIT = 30;
 const RENDER_EVENT = 'transaction:updated';
 
 function generateId() {
@@ -16,6 +19,20 @@ function formatCurrency(amount) {
     currency: 'IDR',
     maximumFractionDigits: 0,
   }).format(Number(amount) || 0);
+}
+
+function formatActivityTime(isoString) {
+  try {
+    return new Intl.DateTimeFormat('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(isoString));
+  } catch (e) {
+    return String(isoString || '');
+  }
 }
 
 function saveTransactions() {
@@ -33,6 +50,24 @@ function loadTransactions() {
     transactions = Array.isArray(parsed) ? parsed : [];
   } catch (e) {
     transactions = [];
+  }
+}
+
+function saveActivities() {
+  localStorage.setItem(ACTIVITY_KEY, JSON.stringify(activities));
+}
+
+function loadActivities() {
+  const data = localStorage.getItem(ACTIVITY_KEY);
+  if (!data) {
+    activities = [];
+    return;
+  }
+  try {
+    const parsed = JSON.parse(data);
+    activities = Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    activities = [];
   }
 }
 
@@ -72,9 +107,56 @@ const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toastMessage');
 const undoButton = document.getElementById('undoButton');
 
+const activityList = document.getElementById('activityList');
+const clearActivityButton = document.getElementById('clearActivityButton');
+
 const balanceElement = document.querySelector('.tracker-summary__balance-amount');
 const incomeElement = document.querySelector('.tracker-summary__stat-amount--income');
 const expenseElement = document.querySelector('.tracker-summary__stat-amount--expense');
+
+const ACTIVITY_META = {
+  tambah: {
+    verb: 'tambah',
+    iconClass: 'tracker-activity__icon--add',
+    icon: [
+      ['line', { x1: '12', y1: '5', x2: '12', y2: '19' }],
+      ['line', { x1: '5', y1: '12', x2: '19', y2: '12' }],
+    ],
+  },
+  edit: {
+    verb: 'edit',
+    iconClass: 'tracker-activity__icon--edit',
+    icon: [
+      ['path', { d: 'M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z' }],
+    ],
+  },
+  hapus: {
+    verb: 'hapus',
+    iconClass: 'tracker-activity__icon--delete',
+    icon: [
+      ['polyline', { points: '3 6 5 6 21 6' }],
+      ['path', { d: 'M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2' }],
+    ],
+  },
+  'ubah-tipe': {
+    verb: 'ubah-tipe',
+    iconClass: 'tracker-activity__icon--type',
+    icon: [
+      ['path', { d: 'm17 2 4 4-4 4' }],
+      ['path', { d: 'M3 11v-1a4 4 0 0 1 4-4h14' }],
+      ['path', { d: 'm7 22-4-4 4-4' }],
+      ['path', { d: 'M21 13v1a4 4 0 0 1-4 4H3' }],
+    ],
+  },
+  pulihkan: {
+    verb: 'pulihkan',
+    iconClass: 'tracker-activity__icon--restore',
+    icon: [
+      ['path', { d: 'M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8' }],
+      ['path', { d: 'M3 3v5h5' }],
+    ],
+  },
+};
 
 function setEditMode(isEditing) {
   if (submitButton) submitButton.textContent = isEditing ? 'Update' : 'Simpan';
@@ -105,11 +187,12 @@ function getVisibleTransactions() {
   return visible;
 }
 
-function createSvgIcon(children) {
+function createSvgIcon(children, size) {
   const ns = 'http://www.w3.org/2000/svg';
+  const dimension = size || 28;
   const svg = document.createElementNS(ns, 'svg');
-  svg.setAttribute('width', '28');
-  svg.setAttribute('height', '28');
+  svg.setAttribute('width', String(dimension));
+  svg.setAttribute('height', String(dimension));
   svg.setAttribute('viewBox', '0 0 24 24');
   svg.setAttribute('fill', 'none');
   svg.setAttribute('stroke', 'currentColor');
@@ -275,12 +358,91 @@ function updateResultCount(visibleCount, totalCount) {
   resultCount.textContent = `Menampilkan ${visibleCount} dari ${totalCount} transaksi.`;
 }
 
+function activityText(entry) {
+  const typeLabel = entry.type === 'income' ? 'pemasukan' : 'pengeluaran';
+  const typeCap = entry.type === 'income' ? 'Pemasukan' : 'Pengeluaran';
+  const nominal = formatCurrency(entry.amount);
+  if (entry.action === 'ubah-tipe') {
+    return `Mengubah tipe "${entry.title}" menjadi ${typeCap}.`;
+  }
+  if (entry.action === 'edit') {
+    return `Mengubah ${typeLabel} "${entry.title}" menjadi ${nominal}.`;
+  }
+  if (entry.action === 'hapus') {
+    return `Menghapus ${typeLabel} "${entry.title}" sebesar ${nominal}.`;
+  }
+  if (entry.action === 'pulihkan') {
+    return `Memulihkan ${typeLabel} "${entry.title}" sebesar ${nominal}.`;
+  }
+  return `Menambah ${typeLabel} "${entry.title}" sebesar ${nominal}.`;
+}
+
+function renderActivities() {
+  if (!activityList) return;
+  activityList.innerHTML = '';
+  if (activities.length === 0) {
+    const empty = document.createElement('div');
+    empty.classList.add('tracker-empty');
+    empty.appendChild(createSvgIcon([
+      ['circle', { cx: '12', cy: '12', r: '10' }],
+      ['polyline', { points: '12 6 12 12 16 14' }],
+    ]));
+    const message = document.createElement('p');
+    message.textContent = 'Belum ada aktivitas. Tambah, ubah, atau hapus transaksi untuk melihat riwayatnya.';
+    empty.appendChild(message);
+    activityList.appendChild(empty);
+    return;
+  }
+  activities.forEach((entry) => {
+    const meta = ACTIVITY_META[entry.action] || ACTIVITY_META.tambah;
+    const item = document.createElement('div');
+    item.classList.add('tracker-activity__item');
+
+    const icon = document.createElement('div');
+    icon.classList.add('tracker-activity__icon', meta.iconClass);
+    icon.appendChild(createSvgIcon(meta.icon, 16));
+
+    const body = document.createElement('div');
+    body.classList.add('tracker-activity__body');
+
+    const text = document.createElement('p');
+    text.classList.add('tracker-activity__text');
+    text.textContent = activityText(entry);
+
+    const time = document.createElement('p');
+    time.classList.add('tracker-activity__time');
+    time.textContent = formatActivityTime(entry.time);
+
+    body.append(text, time);
+    item.append(icon, body);
+    activityList.appendChild(item);
+  });
+}
+
+function logActivity(action, transaction) {
+  if (!transaction) return;
+  activities.unshift({
+    id: Date.now() + Math.floor(Math.random() * 1000),
+    action,
+    title: transaction.title,
+    amount: transaction.amount,
+    type: transaction.type,
+    date: transaction.date,
+    time: new Date().toISOString(),
+  });
+  if (activities.length > ACTIVITY_LIMIT) {
+    activities.length = ACTIVITY_LIMIT;
+  }
+  saveActivities();
+}
+
 function refreshView() {
   const keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
   const visible = getVisibleTransactions();
   renderTransactions(visible, keyword);
   updateSummary();
   updateResultCount(visible.length, transactions.length);
+  renderActivities();
 }
 
 if (transactionForm) {
@@ -306,17 +468,20 @@ if (transactionForm) {
           date,
           type,
         };
+        logActivity('edit', transactions[index]);
       }
       editingTransactionId = null;
       setEditMode(false);
     } else {
-      transactions.push({
+      const created = {
         id: generateId(),
         title: title.trim(),
         amount,
         date,
         type,
-      });
+      };
+      transactions.push(created);
+      logActivity('tambah', created);
     }
 
     saveTransactions();
@@ -381,6 +546,7 @@ function hideToast() {
 function deleteTransaction(id) {
   const index = transactions.findIndex((transaction) => transaction.id === id);
   if (index === -1) return;
+  logActivity('hapus', transactions[index]);
   lastDeleted = { item: transactions[index], index };
 
   transactions = transactions.filter((transaction) => transaction.id !== id);
@@ -420,6 +586,7 @@ function toggleTransactionType(id) {
   if (!transaction) return;
 
   transaction.type = transaction.type === 'income' ? 'expense' : 'income';
+  logActivity('ubah-tipe', transaction);
 
   saveTransactions();
   document.dispatchEvent(new Event(RENDER_EVENT));
@@ -471,13 +638,23 @@ if (undoButton) {
     if (toastTimer) clearTimeout(toastTimer);
     const pos = Math.min(Math.max(restored.index, 0), transactions.length);
     transactions.splice(pos, 0, restored.item);
+    logActivity('pulihkan', restored.item);
     saveTransactions();
     document.dispatchEvent(new Event(RENDER_EVENT));
     hideToast();
   });
 }
 
+if (clearActivityButton) {
+  clearActivityButton.addEventListener('click', function () {
+    activities = [];
+    saveActivities();
+    refreshView();
+  });
+}
+
 loadTransactions();
+loadActivities();
 setDefaultDate();
 setEditMode(false);
 document.dispatchEvent(new Event(RENDER_EVENT));
