@@ -83,8 +83,6 @@ body {
 }
 
 /* Kartu dasar yang dipakai bersama di semua section */
-.tracker-summary__balance,
-.tracker-summary__stat,
 .tracker-form-section__card,
 .tracker-search,
 .tracker-transaction-list {
@@ -95,6 +93,30 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-smooth), transform var(--transition-smooth), border-color var(--transition-fast);
+}
+
+.tracker-summary__balance,
+.tracker-summary__stat {
+  background: var(--bg-card);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border-light);
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-smooth), transform var(--transition-smooth), border-color var(--transition-fast);
+}
+
+.tracker-summary__balance:hover,
+.tracker-summary__stat:hover,
+.tracker-form-section__card:hover,
+.tracker-transaction-list:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: #d4d4d8;
 }
 
 /* =========================================================
@@ -293,39 +315,53 @@ body {
 
 .tracker-form__input {
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0.8rem 0.95rem;
   border-radius: 12px;
   border: 1px solid var(--border-light);
   background: #fcfcfc;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.tracker-form__input:hover {
+  border-color: #d4d4d8;
 }
 
 .tracker-form__input:focus {
   border-color: var(--accent-blue);
   background: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.tracker-form__input:focus-visible,
+.tracker-form__submit:focus-visible,
+.tracker-search__submit:focus-visible,
+.tracker-button:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
 }
 
 .tracker-form__submit {
   background: var(--text-dark);
   color: #fff;
   border: none;
-  padding: 0.85rem 1.5rem;
+  padding: 0.8rem 1.4rem;
   height: 44px;
   border-radius: 12px;
   font-family: inherit;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   cursor: pointer;
-  transition:
-    transform 0.1s,
-    opacity 0.2s;
+  transition: transform var(--transition-fast), opacity var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+  box-shadow: var(--shadow-sm);
 }
 
 .tracker-form__submit:hover {
-  opacity: 0.85;
+  opacity: 0.88;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 .tracker-form__submit:active {
   transform: scale(0.98);
@@ -337,11 +373,11 @@ body {
 .tracker-history {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .tracker-search {
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1.25rem;
 }
 
 .tracker-search__form {
